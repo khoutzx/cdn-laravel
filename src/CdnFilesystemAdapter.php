@@ -19,7 +19,6 @@ use League\Flysystem\UnableToRetrieveMetadata;
 use League\Flysystem\UnableToSetVisibility;
 use League\Flysystem\UnableToWriteFile;
 use League\Flysystem\UrlGeneration\PublicUrlGenerator;
-use League\Flysystem\UrlGeneration\UrlGenerator;
 use RuntimeException;
 
 /**
@@ -28,7 +27,7 @@ use RuntimeException;
  * Paths follow standard filesystem conventions: "folder/sub/file.jpg"
  * The adapter maps them to the CDN's folder/name structure transparently.
  */
-class CdnFilesystemAdapter implements FilesystemAdapter, PublicUrlGenerator, UrlGenerator
+class CdnFilesystemAdapter implements FilesystemAdapter, PublicUrlGenerator
 {
     private CdnClient $client;
     private string $cdnUrl;
