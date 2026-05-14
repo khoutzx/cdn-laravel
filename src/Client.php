@@ -11,7 +11,7 @@ use RuntimeException;
  * Thin HTTP client that wraps all CDN API calls.
  * All methods throw RuntimeException on unrecoverable errors.
  */
-class CdnClient
+class Client
 {
     private ?Client $http = null;
     private ?string $baseUrl = null;

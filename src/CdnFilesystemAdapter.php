@@ -29,11 +29,11 @@ use RuntimeException;
  */
 class CdnFilesystemAdapter implements FilesystemAdapter, PublicUrlGenerator
 {
-    private CdnClient $client;
+    private Client $client;
     private string $cdnUrl;
     private string $defaultFolder;
 
-    public function __construct(CdnClient $client, string $cdnUrl, string $defaultFolder = '')
+    public function __construct(Client $client, string $cdnUrl, string $defaultFolder = '')
     {
         $this->client        = $client;
         $this->cdnUrl        = rtrim($cdnUrl, '/');

@@ -37,7 +37,7 @@ class CdnServiceProvider extends ServiceProvider
             $apiKey = $config['api_key'] ?? config('cdn.api_key') ?? throw new \InvalidArgumentException('CDN SDK: "api_key" is required in disk config or CDN_API_KEY env.');
             $folder = $config['default_folder'] ?? '';
 
-            $client      = new CdnClient($url, $apiKey);
+            $client      = new Client($url, $apiKey);
             $cdnAdapter  = new CdnFilesystemAdapter($client, $url, $folder);
             $flysystem   = new Filesystem($cdnAdapter);
 
