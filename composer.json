@@ -18,7 +18,7 @@
             "src/helpers.php"
         ],
         "psr-4": {
-            "Cdn\\LaravelSdk\\": "src/"
+            "Napi\\Cdn\\": "src/"
         }
     },
     "autoload-dev": {

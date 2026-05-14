@@ -1,6 +1,6 @@
 <?php
 
-namespace Cdn\LaravelSdk\Adapters;
+namespace Napi\Cdn\Adapters;
 
 use Illuminate\Support\Facades\Storage;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Cdn\LaravelSdk;
+namespace Napi\Cdn;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;

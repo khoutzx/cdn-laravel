@@ -1,8 +1,8 @@
 <?php
 
-namespace Cdn\LaravelSdk;
+namespace Napi\Cdn;
 
-use Cdn\LaravelSdk\Adapters\NapiCdnAdapter;
+use Napi\Cdn\Adapters\NapiCdnAdapter;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;

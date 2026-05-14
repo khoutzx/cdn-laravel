@@ -1,6 +1,6 @@
 <?php
 
-namespace Cdn\LaravelSdk;
+namespace Napi\Cdn;
 
 use League\Flysystem\Config;
 use League\Flysystem\FileAttributes;

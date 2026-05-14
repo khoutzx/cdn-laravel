@@ -1,6 +1,6 @@
 <?php
 
-namespace Cdn\LaravelSdk\Facades;
+namespace Napi\Cdn\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
