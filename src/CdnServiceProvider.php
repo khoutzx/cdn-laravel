@@ -2,6 +2,7 @@
 
 namespace Cdn\LaravelSdk;
 
+use Cdn\LaravelSdk\Adapters\NapiCdnAdapter;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
@@ -12,6 +13,14 @@ class CdnServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/cdn.php', 'cdn');
+
+        // Register NapiCdnAdapter as singleton
+        $this->app->singleton('napi-cdn', function ($app) {
+            return new NapiCdnAdapter('cdn');
+        });
+
+        // Register alias for easier access
+        $this->app->alias('napi-cdn', NapiCdnAdapter::class);
     }
 
     public function boot(): void
@@ -23,7 +32,8 @@ class CdnServiceProvider extends ServiceProvider
 
         // Register the "cdn" filesystem driver
         Storage::extend('cdn', function ($app, array $config) {
-            $url    = $config['url']     ?? config('cdn.url')     ?? throw new \InvalidArgumentException('CDN SDK: "url" is required in disk config or CDN_URL env.');
+            // Support both 'url' and 'endpoint_url' for ImageKit compatibility
+            $url    = $config['url'] ?? $config['endpoint_url'] ?? config('cdn.url') ?? config('cdn.endpoint_url') ?? throw new \InvalidArgumentException('CDN SDK: "url" or "endpoint_url" is required in disk config or CDN_URL env.');
             $apiKey = $config['api_key'] ?? config('cdn.api_key') ?? throw new \InvalidArgumentException('CDN SDK: "api_key" is required in disk config or CDN_API_KEY env.');
             $folder = $config['default_folder'] ?? '';
 

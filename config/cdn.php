@@ -4,12 +4,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | CDN Base URL
+    | CDN Base URL / Endpoint URL
     |--------------------------------------------------------------------------
     | The root URL of your CDN backend (no trailing slash).
+    | Can be specified as 'url' or 'endpoint_url' (ImageKit compatibility).
     | Example: https://cdn.example.com
     */
-    'url' => env('CDN_URL'),
+    'url' => env('CDN_URL', env('CDN_ENDPOINT_URL')),
+    'endpoint_url' => env('CDN_ENDPOINT_URL', env('CDN_URL')), // ImageKit compatibility
 
     /*
     |--------------------------------------------------------------------------
