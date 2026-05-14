@@ -29,7 +29,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Cdn\\LaravelSdk\\CdnServiceProvider"
+                "Napi\\Cdn\\CdnServiceProvider"
             ]
         }
     },
