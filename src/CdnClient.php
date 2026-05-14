@@ -49,6 +49,18 @@ class CdnClient
             return $this->userId;
         }
 
+        // Ensure HTTP client is initialized
+        if (!isset($this->http)) {
+            $this->http = new Client([
+                'base_uri' => $this->baseUrl,
+                'headers'  => [
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'Accept'        => 'application/json',
+                ],
+                'http_errors' => false,
+            ]);
+        }
+
         $response = $this->http->get('/api/user');
         $body     = $this->decode($response, '/api/user');
 
