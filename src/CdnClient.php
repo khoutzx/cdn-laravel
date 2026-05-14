@@ -13,9 +13,9 @@ use RuntimeException;
  */
 class CdnClient
 {
-    private Client $http;
-    private string $baseUrl;
-    private string $apiKey;
+    private ?Client $http = null;
+    private ?string $baseUrl = null;
+    private ?string $apiKey = null;
 
     /** Cached user ID resolved from GET /api/user */
     private ?string $userId = null;
@@ -49,17 +49,8 @@ class CdnClient
             return $this->userId;
         }
 
-        // Ensure HTTP client is initialized
-        if (!isset($this->http)) {
-            $this->http = new Client([
-                'base_uri' => $this->baseUrl,
-                'headers'  => [
-                    'Authorization' => 'Bearer ' . $this->apiKey,
-                    'Accept'        => 'application/json',
-                ],
-                'http_errors' => false,
-            ]);
-        }
+        // Ensure all properties are initialized
+        $this->ensureInitialized();
 
         $response = $this->http->get('/api/user');
         $body     = $this->decode($response, '/api/user');
@@ -67,6 +58,17 @@ class CdnClient
         $this->userId = $body['data']['id'] ?? throw new RuntimeException('CDN SDK: unable to resolve user ID from /api/user');
 
         return $this->userId;
+    }
+
+    /**
+     * Ensure all required properties are initialized.
+     * This prevents typed property errors in certain Laravel contexts.
+     */
+    private function ensureInitialized(): void
+    {
+        if ($this->baseUrl === null || $this->apiKey === null || $this->http === null) {
+            throw new RuntimeException('CDN SDK: CdnClient not properly initialized. Ensure constructor was called.');
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
