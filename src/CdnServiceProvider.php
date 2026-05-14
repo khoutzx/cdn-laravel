@@ -41,7 +41,59 @@ class CdnServiceProvider extends ServiceProvider
             $cdnAdapter  = new CdnFilesystemAdapter($client, $url, $folder);
             $flysystem   = new Filesystem($cdnAdapter);
 
-            return new FilesystemAdapter($flysystem, $cdnAdapter, $config);
+            return new class($flysystem, $cdnAdapter, $config) extends FilesystemAdapter {
+                public function __call($method, $args) {
+                    return parent::__call($method, $args);
+                }
+                private $cdnAdapter;
+
+                public function __construct($flysystem, $cdnAdapter, $config) {
+                    parent::__construct($flysystem, $cdnAdapter, $config);
+                    $this->cdnAdapter = $cdnAdapter;
+                }
+
+                public function url($path) {
+                    return $this->cdnAdapter->publicUrl($path, new \League\Flysystem\Config());
+                }
+
+                public function put($path, $contents, $options = []) {
+                    // Verificar se é resource ou string
+                    if (is_resource($contents)) {
+                        $this->driver->writeStream($path, $contents, $options);
+                    } else {
+                        $this->driver->write($path, $contents, $options);
+                    }
+
+                    // Pegar o arquivo real que foi salvo (com timestamp)
+                    if ($this->cdnAdapter->lastUploadedFile && isset($this->cdnAdapter->lastUploadedFile['url'])) {
+                        return $this->cdnAdapter->lastUploadedFile['url']; // Retornar URL completa!
+                    }
+
+                    return $path; // Fallback para path original
+                }
+
+                public function putFile($path, $file = null, $options = []) {
+                    $result = parent::putFile($path, $file, $options);
+
+                    // Pegar URL real se disponível
+                    if ($this->cdnAdapter->lastUploadedFile && isset($this->cdnAdapter->lastUploadedFile['url'])) {
+                        return $this->cdnAdapter->lastUploadedFile['url'];
+                    }
+
+                    return $result ?: $path;
+                }
+
+                public function putFileAs($path, $file = null, $name = null, $options = []) {
+                    $result = parent::putFileAs($path, $file, $name, $options);
+
+                    // Pegar URL real se disponível
+                    if ($this->cdnAdapter->lastUploadedFile && isset($this->cdnAdapter->lastUploadedFile['url'])) {
+                        return $this->cdnAdapter->lastUploadedFile['url'];
+                    }
+
+                    return $result ?: $path . '/' . $name;
+                }
+            };
         });
     }
 }

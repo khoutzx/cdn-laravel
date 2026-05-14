@@ -32,6 +32,7 @@ class CdnFilesystemAdapter implements FilesystemAdapter, PublicUrlGenerator
     private Client $client;
     private string $cdnUrl;
     private string $defaultFolder;
+    public ?array $lastUploadedFile = null;
 
     public function __construct(Client $client, string $cdnUrl, string $defaultFolder = '')
     {
@@ -51,7 +52,10 @@ class CdnFilesystemAdapter implements FilesystemAdapter, PublicUrlGenerator
         try {
             file_put_contents($tmp, $contents);
             [$folder, $filename] = $this->splitPath($path);
-            $this->client->upload($tmp, $filename, $folder);
+            $response = $this->client->upload($tmp, $filename, $folder);
+
+            // Store the actual uploaded file info for later retrieval
+            $this->lastUploadedFile = $response ?? null;
         } catch (RuntimeException $e) {
             throw UnableToWriteFile::atLocation($path, $e->getMessage(), $e);
         } finally {
@@ -63,7 +67,10 @@ class CdnFilesystemAdapter implements FilesystemAdapter, PublicUrlGenerator
     {
         try {
             [$folder, $filename] = $this->splitPath($path);
-            $this->client->uploadStream($contents, $filename, $folder);
+            $response = $this->client->uploadStream($contents, $filename, $folder);
+
+            // Store the actual uploaded file info for later retrieval
+            $this->lastUploadedFile = $response ?? null;
         } catch (RuntimeException $e) {
             throw UnableToWriteFile::atLocation($path, $e->getMessage(), $e);
         }
@@ -289,16 +296,14 @@ class CdnFilesystemAdapter implements FilesystemAdapter, PublicUrlGenerator
     /**
      * Returns the public CDN URL for the given path.
      *
-     * URL format: {cdn_url}/{user_id}/file/{path}
-     *
-     * This matches the backend's File::getUrlAttribute() exactly.
+     * URL format: {cdn_url}/file/{path}
+     * (user_id já está no endpoint_url)
      */
     public function publicUrl(string $path, Config $config): string
     {
-        $userId = $this->client->getUserId();
-        $full   = $this->prefixed($path);
+        $full = $this->prefixed($path);
 
-        return $this->cdnUrl . '/' . $userId . '/file/' . ltrim($full, '/');
+        return rtrim($this->cdnUrl, '/') . '/file/' . ltrim($full, '/');
     }
 
     /**

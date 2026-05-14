@@ -2,7 +2,7 @@
 
 namespace Napi\Cdn;
 
-use GuzzleHttp\Client;
+use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use RuntimeException;
@@ -13,7 +13,7 @@ use RuntimeException;
  */
 class Client
 {
-    private ?Client $http = null;
+    private ?HttpClient $http = null;
     private ?string $baseUrl = null;
     private ?string $apiKey = null;
 
@@ -25,7 +25,7 @@ class Client
         $this->baseUrl = rtrim($baseUrl, '/');
         $this->apiKey  = $apiKey;
 
-        $this->http = new Client([
+        $this->http = new HttpClient([
             'base_uri' => $this->baseUrl,
             'headers'  => [
                 'Authorization' => 'Bearer ' . $this->apiKey,
